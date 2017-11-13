@@ -3,7 +3,7 @@
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
   <groupId>com.example</groupId>
-  <artifactId>persistent-webhook</artifactId>
+  <artifactId>appengine-webhook</artifactId>
   
 <dependencies>
   <dependency>
