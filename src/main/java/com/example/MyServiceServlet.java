@@ -1,6 +1,7 @@
 package com.example;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
@@ -17,11 +18,13 @@ import ai.api.web.AIServiceServlet;
 // [START example]
 @SuppressWarnings("serial")
 public class MyServiceServlet extends AIServiceServlet {
+	
+	private static final Logger log = Logger.getLogger(MyServiceServlet.class.getName());
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     
-	
+	log.info("holidays :"+Data.getHolidays());
 	String sessionId = req.getParameter("sessionId");
 	try{
 	
