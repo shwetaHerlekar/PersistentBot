@@ -64,6 +64,7 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 		output = exitFlow(output);
 		break;
 	default:
+		 output.setSpeech("Default case");
 		break;
 	}
 	}catch(Exception e){
