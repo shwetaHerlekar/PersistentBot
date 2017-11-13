@@ -18,7 +18,7 @@ $(function(){
 		};
 
 
-		$(sentHead+data.message+tail).hide().appendTo('.chatdiv').show("puff", {times : 3}, 200);
+		$(sentHead+data.query+tail).hide().appendTo('.chatdiv').show("puff", {times : 3}, 200);
 
 		$(".chatdiv").animate({ scrollTop: $('.chatdiv').prop("scrollHeight")}, 1000);
 		$("#message").val("");
@@ -27,14 +27,14 @@ $(function(){
 			console.log(res)
 			rotation()
 
-			//speech = res.speech;
-			//res = res.displayText;
+			speech = res.speech;
+			res = res.displayText;
 			
-			//console.log("res"+res)
-			//console.log("speech"+speech)
+			console.log("res"+res)
+			console.log("speech"+speech)
 
-			//res = res.replace(new RegExp(":ob", 'g'),"<button type='button' class='btn btn-md btn-default dbutton'>")
-			//res = res.replace(new RegExp(":cb", 'g'),"</button>")
+			res = res.replace(new RegExp(":ob", 'g'),"<button type='button' class='btn btn-md btn-default dbutton'>")
+			res = res.replace(new RegExp(":cb", 'g'),"</button>")
 			response = res
 			$(receivedHead+response.replace(/(\\n|\n)/g, "<br>")+tail).hide().appendTo('.chatdiv').show("puff", {times : 3}, 200);
 			$(".chatdiv").animate({ scrollTop: $('.chatdiv').prop("scrollHeight")}, 1000);
