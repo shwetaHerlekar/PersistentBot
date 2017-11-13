@@ -27,15 +27,15 @@ $(function(){
 			console.log(res)
 			rotation()
 
-			/*speech = res.speech;
-			res = res.displayText;
+			speech = res;
+			res = res;
 			
 			console.log("res"+res)
 			console.log("speech"+speech)
 
 			res = res.replace(new RegExp(":ob", 'g'),"<button type='button' class='btn btn-md btn-default dbutton'>")
-			res = res.replace(new RegExp(":cb", 'g'),"</button>")*/
-			response = res
+			res = res.replace(new RegExp(":cb", 'g'),"</button>")
+			response = res;
 			$(receivedHead+response.replace(/(\\n|\n)/g, "<br>")+tail).hide().appendTo('.chatdiv').show("puff", {times : 3}, 200);
 			$(".chatdiv").animate({ scrollTop: $('.chatdiv').prop("scrollHeight")}, 1000);
 

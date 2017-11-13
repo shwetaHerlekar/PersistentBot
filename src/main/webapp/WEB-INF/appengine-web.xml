@@ -2,14 +2,9 @@
 
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>dummyproject-05042017</application>
-  <version>persistent-bot</version>
+  <version>persistent-bot1</version>
   <threadsafe>true</threadsafe>
   <system-properties>
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
-	
-		<property name="ae-cloudsql.cloudsql-database-url"
-			value="jdbc:google:mysql://poc-iot:asia-east1:instance01/eyChatDB?user=root&amp;password=root" />
-		<property name="ae-cloudsql.local-database-url"
-			value="jdbc:mysql://google/${database}?cloudSqlInstance=poc-iot:asia-east1:instance01&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory&amp;user=${user}&amp;password=${password}&amp;useSSL=false" />
 	</system-properties>
 </appengine-web-app>
