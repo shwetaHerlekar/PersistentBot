@@ -26,54 +26,6 @@
 	
 
 </head>
-<script>
-var sessionId = "ab"+parseInt(Math.random() * 10000000);
-//alert(sessionId);
-
-function userText()
-{
-
-	var tinput = document.getElementById("message");
-	text = tinput.value;
-	tinput.value = "";
-	
-	//alert(text);
-	var div = document.getElementById("chatdiv");
-	var p = document.createElement('p');
-	p.innerHTML = text;
-	
-	var br = document.createElement('br');
-	p.appendChild(br);
-	
-	div.appendChild(p);
-	
-	askChatbot();
-}
-
-function askChatbot()
-{
-	var http = new XMLHttpRequest();
-	var url="ai?query="+text+"&sessionId="+sessionId;
-	http.open("GET", url, true);
-
-		//Send the proper header information along with the request
-		http.onreadystatechange = function() {//Call a function when the state changes.
-			if(http.readyState == 4 && http.status == 200) {
-				//alert(http.responseText);
-				var div = document.getElementById("chatdiv");
-				var p = document.createElement('p');
-				p.innerHTML = http.responseText;
-	
-				var br = document.createElement('br');
-				p.appendChild(br);
-	
-				div.appendChild(p);
-			}
-		}
-		
-	   http.send();
-}
-</script>
 
 <body>
  <div class="container">
