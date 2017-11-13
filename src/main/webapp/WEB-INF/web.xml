@@ -20,14 +20,4 @@
     <servlet-name>query1</servlet-name>
     <url-pattern>/ai</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>Events</display-name>
-    <servlet-name>Events</servlet-name>
-    <servlet-class>com.example.Events</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Events</servlet-name>
-    <url-pattern>/Events</url-pattern>
-  </servlet-mapping>
 </web-app>
