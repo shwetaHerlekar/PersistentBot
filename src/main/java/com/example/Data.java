@@ -1,5 +1,6 @@
 package com.example;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.simple.JSONArray;
@@ -10,24 +11,26 @@ public class Data {
 	@SuppressWarnings({ "unused", "deprecation", "unchecked" })
 	public static JSONObject getHolidays() {
 		// TODO Auto-generated method stub
+		int leaveBalance = 4;
+		
 		JSONObject responseObject = new JSONObject();
 		
-		Date event_date = new Date(2017, 11, 21);
-		responseObject.put(event_date.toString(), "birthday");
+		Calendar bday = Calendar.getInstance();
+		bday.set(2017, 11, 21);
+		responseObject.put("birthday", bday.toString());
 		
-		JSONArray holidays = new JSONArray();
+		JSONObject holidays = new JSONObject();
+		Calendar event_date= Calendar.getInstance();
+		event_date.set(2017, 12, 25);
+		holidays.put(event_date.toString(), "christmas");
 		
-		JSONObject christmas = new JSONObject();
-		event_date = new Date(2017, 12, 25);
-		christmas.put(event_date.toString(), "christmas");
-		holidays.add(christmas);
-		
-		JSONObject new_year = new JSONObject();
-		event_date = new Date(2017, 12, 31);
-		new_year.put(event_date.toString(), "newyear");
-		holidays.add(christmas);
+
+		event_date= Calendar.getInstance();
+		event_date.set(2017, 12, 31);
+		holidays.put(event_date.toString(), "newyear");
 		
 		responseObject.put("holidays", holidays);
+		responseObject.put("leave_balance", leaveBalance);
 		return responseObject;
 	}
 

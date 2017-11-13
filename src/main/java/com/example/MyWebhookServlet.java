@@ -1,7 +1,14 @@
 package com.example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.logging.Logger;
+
 import org.json.simple.JSONObject;
 
 import com.google.gson.JsonElement;
@@ -93,18 +100,45 @@ private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement
 	return null;
 }
 
-private Fulfillment queryForLeave(Fulfillment output,HashMap<String, JsonElement> parameter) {
+@SuppressWarnings({ "unchecked", "deprecation" })
+private Fulfillment queryForLeave(Fulfillment output,HashMap<String, JsonElement> parameter) throws ParseException {
 	//function to return if no inputs near by holiday/birthday, a mesage to ask if leave is for that
 	//if all fields present redirect to confirm
 	// if event present redirect to SYSTEM_SUGESTION_SATISFIED_YES
 	//if start date & no of days, calc end date
 	//
 	JSONObject holidayData = Data.getHolidays();
+	Calendar birthday = (Calendar) holidayData.get("birthday");
 	
+	Calendar today = Calendar.getInstance();
+	
+	if(isEventWithinRange(birthday))
+	{
+		
+	}
+	else 
+	{
+		JSONObject holidays = (JSONObject) holidayData.get("holidays");
+		for(Iterator iterator = holidays.keySet().iterator(); iterator.hasNext();) {
+		    String key = (String) iterator.next();
+		    System.out.println(holidays.get(key));
+		}
+	}
+		
 	if (parameter.get("startDate") != null) {
 		
 	}
 	return null;
 }
+
+	public static boolean isEventWithinRange(Calendar testDate) {
+		Calendar today = Calendar.getInstance();
+		today.clear(Calendar.HOUR); today.clear(Calendar.MINUTE); today.clear(Calendar.SECOND);
+		
+		Calendar lastday = Calendar.getInstance();
+		lastday.add(Calendar.MONTH, 3);
+		
+	    return testDate.after(today) && testDate.before(lastday);
+	}
 
 }
