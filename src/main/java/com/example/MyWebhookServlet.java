@@ -70,6 +70,10 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 		log.info("exit");
 		output = exitFlow(output);
 		break;
+	case "input.welcome" :
+		log.info("input.welcome");
+		output = eventTriggered(output);
+		break;
 	default:
 		 output.setSpeech("Default case");
 		break;
@@ -80,6 +84,24 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 	// output.setSpeech(input.getResult().toString());
 
 //output.setSpeech("from webhook");	
+}
+
+private Fulfillment eventTriggered(Fulfillment output) {
+	/* with all params except event go to custom leave apply
+ * 
+ * 	
+ */
+	log.info("event trig fun");
+	Map<String,String> outParameter = new HashMap<>();
+	AIEvent followupEvent = new AIEvent("event_triggered");
+	String message = "Wanna do it yourself?  Okay! I would not give my suggestion, just let me know the details. I will apply for you." ;
+
+	log.info("rerouting to event : evt trg");
+	followupEvent.setData(outParameter);
+	output.setFollowupEvent(followupEvent);
+	output.setSpeech(message);
+	output.setDisplayText(message);
+	return output;
 }
 
 private Fulfillment queryLeave(Fulfillment output, HashMap<String, JsonElement> parameter) throws ParseException {
@@ -172,7 +194,7 @@ private Fulfillment queryLeave(Fulfillment output, HashMap<String, JsonElement> 
 	else{
 		//api call to check for event
 		//String msg = Suggest(new Date());
-		message = "Hurry you have " + balance + "leaves remaining and ----------" ; 
+		message = "Hurry you have " + balance + " leaves remaining and ----------" ; 
 		contextOut.setLifespan(3);
 		contextOut.setName("proceed");
 		contextOut.setParameters(outParameters);
