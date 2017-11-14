@@ -97,10 +97,9 @@ private Fulfillment eventTriggered(Fulfillment output) {
 	String message = "Wanna do it yourself?  Okay! I would not give my suggestion, just let me know the details. I will apply for you." ;
 
 	log.info("rerouting to event : evt trg");
-	followupEvent.setData(outParameter);
 	output.setFollowupEvent(followupEvent);
-	output.setSpeech(message);
-	output.setDisplayText(message);
+	/*output.setSpeech(message);
+	output.setDisplayText(message);*/
 	return output;
 }
 
