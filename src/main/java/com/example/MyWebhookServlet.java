@@ -302,8 +302,10 @@ private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, Json
 	//if start date & no of days, calc end date
 	//
 	JSONObject holidayData = Data.getHolidays();
-	Date birthday = new Date();
+	String bday = holidayData.get("birthday").toString();
+	Date birthday = new SimpleDateFormat("dd/MM/yyyy").parse(bday);  
 	String msg = "";
+	
 	if(isEventWithinRange(birthday))
 	{
 		msg = "Your birthday is coming on "+birthday+". Want to go out??";
