@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -14,7 +15,7 @@ import org.json.simple.JSONObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 
-
+import ai.api.model.AIEvent;
 import ai.api.model.AIOutputContext;
 import ai.api.model.Fulfillment;
 import ai.api.web.AIWebhookServlet;
@@ -35,11 +36,8 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 	switch (action) {
 	case "QUERY_LEAVE":
 		log.info("in action : query_leave"  );
-		output = checkBalance(output, parameter);
+		output = queryLeave(output, parameter);
 		break;
-	/*case "PROCEED" :
-		log.info("intent PROCEED ");
-		output = suggest(output, parameter);*/
 	case "SYSTEM_SUGESTION_SATISFIED_YES" :
 		log.info(" intent SYSTEM_SUGESTION_SATISFIED_YES ");
 		output = submitFeilds(output, parameter);
@@ -55,6 +53,10 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 	case "CONFIRM_LEAVE_YES" :
 		log.info("intent CONFIRM_LEAVE_YES");
 		output = confirmLeave(output, parameter);
+		break;
+	case "CONFIRM_LEAVE_NO" :
+		log.info("CONFIRM_LEAVE_NO");
+	//	output = 
 		break;
 	case "RESTART" :
 		log.info("intent : restart");
@@ -76,9 +78,9 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 //output.setSpeech("from webhook");	
 }
 
-private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement> parameter) throws ParseException {
+private Fulfillment queryLeave(Fulfillment output, HashMap<String, JsonElement> parameter) throws ParseException {
 	// TODO Auto-generated method stub
-	log.info("inside checkBal");
+	log.info("inside queryLeave");
 	HashMap<String, Integer> holidayData = new HashMap<>( Data.getHolidays());
 	log.info("holiday "+ holidayData.toString());
 	AIOutputContext contextOut = new AIOutputContext();
@@ -121,34 +123,102 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 		outParameters.put("event", contextOutParameter);
 	}
 	if (balance <= 0) {
-		message = "You don't have sufficent leaves. You will need approval from your delivery partner, if you want to apply for leave" ;
-		
+		message = "Sorry dear, you have insufficient leave balance, you will need DP approval If want to apply for leave." ;
+		contextOut.setLifespan(2);
+		contextOut.setName("InsufficientBalance");
+		contextOut.setParameters(outParameters);
+		output.setContextOut(contextOut);
+		log.info("insufficent balance");
 	}
 	else if (balance < 3 && days < 3) {
 		message = "Your leave balance is low. You are having only " + balance + ". Do you still want to apply for leave ?" ;
-		contextOut.setLifespan(2);
-		contextOut.setName("proceed");
-		contextOut.setParameters(outParameters);
+		List<AIOutputContext> contextOutList = new LinkedList<AIOutputContext>();
+		AIOutputContext contextOut1 = new AIOutputContext();
+		contextOut1.setLifespan(2);
+		contextOut1.setName("SystemSugestionSatisfied-Yes");
+		contextOut1.setParameters(outParameters);
+		contextOutList.add(contextOut1);
+		AIOutputContext contextOut2 = new AIOutputContext();
+		contextOut2.setLifespan(2);
+		contextOut2.setName("SystemSugestionSatisfied-no");
+		contextOut2.setParameters(outParameters);
+		contextOutList.add(contextOut2);
+		log.info("Context out parameters : if low balance");
+		output.setContextOut(contextOutList);
+	
 	}
 	else if(balance < days){
 		message = "Your leave balance is less than :" + days +". You will need Delivery partner approval if you will apply. Still wanna apply? Or dear you can apply for "+days+ " days.";
-		contextOut.setLifespan(3);
-		contextOut.setName("proceed");
-		contextOut.setParameters(outParameters);
+		List<AIOutputContext> contextOutList = new LinkedList<AIOutputContext>();
+		AIOutputContext contextOut1 = new AIOutputContext();
+		contextOut1.setLifespan(2);
+		contextOut1.setName("SystemSugestionSatisfied-Yes");
+		contextOut1.setParameters(outParameters);
+		contextOutList.add(contextOut1);
+		AIOutputContext contextOut2 = new AIOutputContext();
+		contextOut2.setLifespan(2);
+		contextOut2.setName("SystemSugestionSatisfied-no");
+		contextOut2.setParameters(outParameters);
+		contextOutList.add(contextOut2);
+		log.info("Context out parameters : if low balance");
+		output.setContextOut(contextOutList);
+		log.info("balance < req days");
+
 	}
 	else{
 		//api call to check for event
-		//String msg = Suggest(parameter);
-		message = "Hurry you have " + days + "leaves remaining and ----------" ; 
-				contextOut.setLifespan(3);
+		//String msg = Suggest(new Date());
+		message = "Hurry you have " + balance + "leaves remaining and ----------" ; 
+		contextOut.setLifespan(3);
 		contextOut.setName("proceed");
 		contextOut.setParameters(outParameters);
+		output.setContextOut(contextOut);
+
 	}
 	output.setDisplayText(message);
 	output.setSpeech(message);
-	output.setContextOut(contextOut);
 	return output;
 }
+
+private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement> parameter) {
+	log.info("submit feilds");
+	String message = "";
+	String event = "";
+	String comment = "";
+	HashMap<String, JsonElement> outParameter = parameter;
+	if (!parameter.get("event").equals("")) {
+		event = parameter.get("event").getAsString();
+		comment = "Leave for "+event;
+		log.info("comment : "+comment);
+	}
+	if (!parameter.get("comment").equals("")) {
+		comment = parameter.get("comment").getAsString();
+	}
+		message = "You want to apply for leave from " + parameter.get("startDate").getAsString() + " to " + parameter.get("endDate").getAsString() + comment;
+		outParameter.put("comment",new JsonPrimitive(comment) );
+	
+	message += " \n please confirm ";
+	log.info("message");
+	output.setSpeech(message);
+	output.setDisplayText(message);
+	log.info("setting context");
+	List<AIOutputContext> contextOutList = new LinkedList<AIOutputContext>();
+	AIOutputContext contextOut1 = new AIOutputContext();
+	contextOut1.setLifespan(2);
+	contextOut1.setName("confirmLeave - yes");
+	contextOut1.setParameters(outParameter);
+	contextOutList.add(contextOut1);
+	AIOutputContext contextOut2 = new AIOutputContext();
+	contextOut2.setLifespan(2);
+	contextOut2.setName("confirmLeave - no");
+	contextOut2.setParameters(outParameter);
+	contextOutList.add(contextOut2);
+	log.info("Context out parameters set");
+	output.setContextOut(contextOutList);
+	return output;
+}
+
+
 
 private Fulfillment exitFlow(Fulfillment output) {
 	
@@ -160,91 +230,65 @@ private Fulfillment exitFlow(Fulfillment output) {
 
 @SuppressWarnings("unchecked")
 private Fulfillment confirmLeave(Fulfillment output, HashMap<String, JsonElement> parameter) {
-/*
- * 	leave confirmed, deduct from balance
- * reset context
- */
-	HashMap<String, JsonElement> outParameters = new HashMap<String, JsonElement>();
+
+	log.info("in confirm leave");
+	HashMap<String, JsonElement> outParameters = parameter;
 	String message = "";
 	AIOutputContext contextOut = new AIOutputContext();
 	output.setContextOut(contextOut); // context reset to ""
 	HashMap<String, Integer> holidayData = new HashMap<>( Data.getHolidays());
 	int leaveBalance = (int) holidayData.get("leave_balance");
-	int days = getDays(parameter.get("startdate").getAsString(), parameter.get("endDate").getAsString());
+	log.info("leave balance : " +leaveBalance );
+	int days = getDays(parameter.get("startDate").getAsString(), parameter.get("endDate").getAsString());
 	if (leaveBalance < days) {
-		message = "Your leave balance is less than :" + days +". You will need Delivery partner approval for applying. Still wanna apply? Or dear you can apply for "+days+ " days.";
-		contextOut.setLifespan(2);
-		contextOut.setName("proceed");
-		contextOut.setParameters(outParameters);
+		message = "Your leave balance is less than :" + days +". You will need Delivery partner approval for applying. Still wanna apply? Or dear you can apply for "+days+ " days or less.";
+		List<AIOutputContext> contextOutList = new LinkedList<AIOutputContext>();
+		AIOutputContext contextOut1 = new AIOutputContext();
+		contextOut1.setLifespan(2);
+		contextOut1.setName("SystemSugestionSatisfied-Yes");
+		contextOut1.setParameters(outParameters);
+		contextOutList.add(contextOut1);
+		AIOutputContext contextOut2 = new AIOutputContext();
+		contextOut2.setLifespan(2);
+		contextOut2.setName("SystemSugestionSatisfied-no");
+		contextOut2.setParameters(outParameters);
+		contextOutList.add(contextOut2);
+		log.info("Context out parameters : if low balance : while confirmation");
+		output.setContextOut(contextOutList);
+	
 	}
 	else{
 		message = "Yeah! your leave has been applied :) ";
+		holidayData.put("leave_balane", leaveBalance - 1);
+		
 	}
-	holidayData.put("leaveBalane", leaveBalance - 1);
+	
 	output.setDisplayText(message);
 	output.setSpeech(message);
 	return output;
 }
 
 private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, JsonElement> parameter) {
-/* with all params except event go to custom leave apply
+	/* with all params except event go to custom leave apply
  * 
  * 	
  */
+	log.info("fallback custom apply");
+	Map<String,String> outParameter = new HashMap<>();
+	AIEvent followupEvent = new AIEvent("APPLY_LEAVE_CUSTOM");
 	String message = "Wanna do it yourself?  Okay! I would not give my suggestion, just let me know the details. I will apply for you." ;
-	AIOutputContext contextOut = new AIOutputContext();
-	contextOut.setName("applyForLeave-custom");
-	contextOut.setLifespan(2);
-	HashMap<String, JsonElement> outParameters = new HashMap<String, JsonElement>();
 	if (parameter.containsKey("startDate") ){
-		JsonElement startDate = new JsonPrimitive(parameter.get("startDate").getAsString());
-		outParameters.put("startDate", startDate);
+		outParameter.put("startDate", parameter.get("startDate").getAsString());
 	} if( parameter.containsKey("endDate") ) {
-		JsonElement endDate = new JsonPrimitive(parameter.get("endDate").getAsString());
-		outParameters.put("endDate", endDate);
+		outParameter.put("endDate", parameter.get("endDate").getAsString());
 	}
-	contextOut.setParameters(outParameters);
-	output.setContextOut(contextOut);
+	log.info("rerouting to event : APPLY_LEAVE_CUSTOM");
+	followupEvent.setData(outParameter);
+	output.setFollowupEvent(followupEvent);
 	output.setSpeech(message);
 	output.setDisplayText(message);
 	return output;
 }
-
-private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement> parameter) {
-/* submited after getting all feilds
- *  check for leave balance. if  avil redirect to confirm_leave   else redirect to InsufficientBalance
- *  suggest if near by holiday comming and redirect to confirm leave
- * 
- */
-	String message = "";
-	if (parameter.get("comment").equals("")) {
-		message = "You want to apply for leave from " + parameter.get("startDate").getAsString() + " to " + parameter.get("endDate").getAsString() + " as "+ parameter.get("comment").getAsString();
-	}
-	else{
-		message = "You want to apply for leave from " + parameter.get("startDate").getAsString() + " to " + parameter.get("endDate").getAsString() + " for "+ parameter.get("event").getAsString();
-
-	}
-	message += " \n please confirm ";
-	output.setSpeech(message);
-	output.setDisplayText(message);
-	
-	List<AIOutputContext> contextOutList = new LinkedList<AIOutputContext>();
-	AIOutputContext contextOut1 = new AIOutputContext();
-	contextOut1.setLifespan(2);
-	contextOut1.setName("confirmLeave - yes");
-	contextOut1.setParameters(parameter);
-	contextOutList.add(contextOut1);
-	AIOutputContext contextOut2 = new AIOutputContext();
-	contextOut2.setLifespan(2);
-	contextOut2.setName("confirmLeave - no");
-	contextOut2.setParameters(parameter);
-	contextOutList.add(contextOut2);
-
-	log.info("Context out parameters");
-	output.setContextOut(contextOutList);
-	return output;
-}
-
 
 
  private String Suggest(HashMap<String, JsonElement> parameter) throws ParseException {
@@ -254,8 +298,7 @@ private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement
 	//if start date & no of days, calc end date
 	//
 	JSONObject holidayData = Data.getHolidays();
-	Date birthday = (Date) holidayData.get("birthday");
-	
+	Date birthday = new Date();
 	String msg = "";
 	if(isEventWithinRange(birthday))
 	{
