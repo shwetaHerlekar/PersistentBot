@@ -2,11 +2,11 @@ package com.example;
 
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
-
 import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonElement.*;
+
 import ai.api.model.AIOutputContext;
 import ai.api.model.Fulfillment;
 import ai.api.web.AIWebhookServlet;
@@ -246,34 +247,33 @@ private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement
 
 
 @SuppressWarnings({ "unchecked", "deprecation" })
-private Fulfillment queryForLeave(Fulfillment output,HashMap<String, JsonElement> parameter) throws ParseException {
+ private String Suggest(HashMap<String, JsonElement> parameter) throws ParseException {
 	//function to return if no inputs near by holiday/birthday, a mesage to ask if leave is for that
 	//if all fields present redirect to confirm
 	// if event present redirect to SYSTEM_SUGESTION_SATISFIED_YES
 	//if start date & no of days, calc end date
 	//
 	JSONObject holidayData = Data.getHolidays();
-	Calendar birthday = (Calendar) holidayData.get("birthday");
+	Date birthday = (Date) holidayData.get("birthday");
 	
-	Calendar today = Calendar.getInstance();
-	
+	String msg = "";
 	if(isEventWithinRange(birthday))
 	{
-		
+		msg = "Your birthday is coming on 21st November 2017. Want to go out??";
 	}
 	else 
 	{
 		JSONObject holidays = (JSONObject) holidayData.get("holidays");
 		for(Iterator iterator = holidays.keySet().iterator(); iterator.hasNext();) {
 		    String key = (String) iterator.next();
-		    System.out.println(holidays.get(key));
+		    log.info(key);
 		}
 	}
 		
 	if (parameter.get("startDate").equals("")) {
 		
 	}
-	return null;
+	return msg;
 }
 private int getDays(String startDate , String endDate) {
 	
@@ -282,14 +282,10 @@ int days = 0;
 
 return 0;
 }
-	public static boolean isEventWithinRange(Calendar testDate) {
-		Calendar today = Calendar.getInstance();
-		today.clear(Calendar.HOUR); today.clear(Calendar.MINUTE); today.clear(Calendar.SECOND);
-		
-		Calendar lastday = Calendar.getInstance();
-		lastday.add(Calendar.MONTH, 3);
-		
-	    return testDate.after(today) && testDate.before(lastday);
+	public boolean isEventWithinRange(Date testDate) {
+	  Date today = new Date(2017, 11, 14);
+	  Date last = new Date(2018, 1, 31);
+	  return !(testDate.before(today) || testDate.after(last));
 	}
 
 }
