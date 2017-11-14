@@ -138,8 +138,8 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 	}
 	else{
 		//api call to check for event
-		String msg = Suggest(parameter);
-		message = "Hurry you have " + days + "leaves remaining and ----------"+msg ; 
+		//String msg = Suggest(parameter);
+		message = "Hurry you have " + days + "leaves remaining and ----------" ; 
 				contextOut.setLifespan(3);
 		contextOut.setName("proceed");
 		contextOut.setParameters(outParameters);
@@ -247,7 +247,6 @@ private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement
 
 
 
-@SuppressWarnings({ "unchecked", "deprecation" })
  private String Suggest(HashMap<String, JsonElement> parameter) throws ParseException {
 	//function to return if no inputs near by holiday/birthday, a mesage to ask if leave is for that
 	//if all fields present redirect to confirm
