@@ -103,12 +103,12 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 			
 		}
 		if (!parameter.get("endDate").equals("")) {
-			log.info("enddate");
+			log.info("endDate");
 			JsonElement endDate = new JsonPrimitive(parameter.get("endDate").toString());
 			outParameters.put("endDate", endDate);
 		}
 		if (!parameter.get("endDate").equals("") && !parameter.get("startDate").equals("")) {
-			days =  getDays(parameter.get("startdate").toString(), parameter.get("endDate").toString());
+			days =  getDays(parameter.get("startDate").toString(), parameter.get("endDate").toString());
 			JsonElement noOfDay = new JsonPrimitive(days);// fetched no of days
 			outParameters.put("noOfDays", noOfDay);
 			//fetch no of days
