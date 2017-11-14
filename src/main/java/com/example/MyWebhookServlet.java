@@ -301,7 +301,7 @@ private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, Json
  */
 	log.info("fallback custom apply");
 	Map<String,String> outParameter = new HashMap<>();
-	AIEvent followupEvent = new AIEvent("APPLY_LEAVE_CUSTOM");
+	AIEvent followupEvent = new AIEvent("apply-custom-leave");
 	String message = "Wanna do it yourself?  Okay! I would not give my suggestion, just let me know the details. I will apply for you." ;
 	if (parameter.containsKey("startDate") ){
 		outParameter.put("startDate", parameter.get("startDate").getAsString());
