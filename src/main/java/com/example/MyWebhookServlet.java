@@ -95,6 +95,7 @@ private Fulfillment eventTriggered(Fulfillment output) {
 	Map<String,String> outParameter = new HashMap<>();
 	AIEvent followupEvent = new AIEvent("event_triggered");
 	String message = "Wanna do it yourself?  Okay! I would not give my suggestion, just let me know the details. I will apply for you." ;
+	followupEvent.setData(outParameter);
 
 	log.info("rerouting to event : evt trg");
 	output.setFollowupEvent(followupEvent);
