@@ -76,7 +76,7 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 //output.setSpeech("from webhook");	
 }
 
-private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement> parameter) {
+private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement> parameter) throws ParseException {
 	// TODO Auto-generated method stub
 	log.info("inside checkBal");
 	HashMap<String, Integer> holidayData = new HashMap<>( Data.getHolidays());
@@ -138,7 +138,8 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 	}
 	else{
 		//api call to check for event
-		message = "Hurry you have " + days + "leaves remaining and ----------" ; 
+		String msg = Suggest(parameter);
+		message = "Hurry you have " + days + "leaves remaining and ----------"+msg ; 
 				contextOut.setLifespan(3);
 		contextOut.setName("proceed");
 		contextOut.setParameters(outParameters);
