@@ -309,10 +309,14 @@ private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, Json
 		outParameter.put("endDate", parameter.get("endDate").getAsString());
 	}
 	log.info("rerouting to event : APPLY_LEAVE_CUSTOM");
-	followupEvent.setData(outParameter);
+	//followupEvent.setData(outParameter);
 	output.setFollowupEvent(followupEvent);
 /*	output.setSpeech(message);
 	output.setDisplayText(message);*/
+	AIOutputContext contextOut2 = new AIOutputContext();
+		contextOut2.setLifespan(2);
+		contextOut2.setName("systemsuggestedSatisfied-no");
+		output.setContextOut(contextOut2);
 	return output;
 }
 

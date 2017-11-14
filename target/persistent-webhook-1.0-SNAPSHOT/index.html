@@ -1,0 +1,64 @@
+<html>
+
+<head>
+	<title>Chatbot</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<link rel="stylesheet" type="text/css" href="css/style.css"><!--  -->
+	
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+  crossorigin="anonymous"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- <script type="text/javascript" src="static/js/ApiAi.js"></script>-->
+	
+	<script type="text/javascript" src="/scripts/md5.js"></script>
+	
+	<script type="text/javascript" src="/scripts/chat_script.js"></script>
+		
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+
+</head>
+
+<body>
+ <div class="container">
+
+		<div class="row">
+
+			<div class="col-xs-offset-1 col-xs-10 col-xs-offset-1 col-xs-10 text-center " style="margin-top: 30px;">
+				<div class="text-centre chatheader col-xs-12">
+
+					<div class="col-xs-offset-2 col-xs-2">
+						<img id="logo" src="images/persistent_logo.png" height="80px" width="80px">
+					</div>
+				</div>
+			</div>
+			<div class="col-md-offset-1 col-md-10 col-sm-offset-1 col-sm-10">
+				<div class="col-md-12 col-sm-12 chatdiv" id="chatdiv">
+					
+				</div>
+
+				<div class="input-group">
+					<span class="input-group-addon" id="speak-box"><i id="speak" class="fa fa-volume-up fa-lg"></i></span>
+					<input type="text" name="message" id="message" class="form-control" placeholder="Enter the message">
+					<span class="fa fa-microphone micspan fa-lg" id="rec"></span>
+					<div class="input-group-btn">
+						<button class="btn btn-primary" type="button" id="send"><i class="glyphicon glyphicon-send"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+</body>
+
+</html>
