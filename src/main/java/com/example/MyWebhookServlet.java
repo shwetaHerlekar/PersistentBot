@@ -13,7 +13,6 @@ import org.json.simple.JSONObject;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonElement.*;
 import ai.api.model.AIOutputContext;
 import ai.api.model.Fulfillment;
 import ai.api.web.AIWebhookServlet;
@@ -87,7 +86,7 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 	int days = 0;
 	HashMap<String, JsonElement> outParameters = new HashMap<String, JsonElement>();
 	
-	if (parameter.containsKey("noOfDays") && parameter.get("noOfDays").equals("") ){
+	if (parameter.containsKey("noOfDays") && !parameter.get("noOfDays").equals("") ){
 		log.info("contains no of days");
 		//days = Integer.parseInt(parameter.get("noOfDays"));
 		JsonElement contextOutParameter;
@@ -95,18 +94,18 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 		outParameters.put("noOfDays", contextOutParameter);
 	}
 	if (parameter.containsKey("startDate") && parameter.containsKey("endDate")) {
-		if (parameter.get("startDate").equals("")) {
+		if (!parameter.get("startDate").equals("")) {
 			log.info("start date");
 			JsonElement startDate = new JsonPrimitive(parameter.get("startDate").toString());
 			outParameters.put("startDate", startDate);
 			
 		}
-		if (parameter.get("endDate").equals("")) {
+		if (!parameter.get("endDate").equals("")) {
 			log.info("enddate");
 			JsonElement endDate = new JsonPrimitive(parameter.get("endDate").toString());
 			outParameters.put("endDate", endDate);
 		}
-		if (parameter.get("endDate").equals("") && parameter.get("startDate").equals("")) {
+		if (!parameter.get("endDate").equals("") && !parameter.get("startDate").equals("")) {
 			days =  getDays(parameter.get("startdate").toString(), parameter.get("endDate").toString());
 			JsonElement noOfDay = new JsonPrimitive(days);// fetched no of days
 			outParameters.put("noOfDays", noOfDay);
@@ -114,7 +113,7 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 		}
 		
 	}
-	if (parameter.containsKey("event") && parameter.get("event").equals("")) {
+	if (parameter.containsKey("event") && !parameter.get("event").equals("")) {
 		JsonElement contextOutParameter;
 		contextOutParameter = new JsonPrimitive(parameter.get("event").equals(""));
 		outParameters.put("event", contextOutParameter);
@@ -168,7 +167,7 @@ private Fulfillment confirmLeave(Fulfillment output, HashMap<String, JsonElement
 	output.setContextOut(contextOut); // context reset to ""
 	HashMap<String, Integer> holidayData = new HashMap<>( Data.getHolidays());
 	int leaveBalance = (int) holidayData.get("leave_balance");
-	int days = getDays(parameter.get("startdate").toString(), parameter.get("endDate").toString());
+	int days = getDays(parameter.get("startdate").getAsString(), parameter.get("endDate").getAsString());
 	if (leaveBalance < days) {
 		message = "Your leave balance is less than :" + days +". You will need Delivery partner approval for applying. Still wanna apply? Or dear you can apply for "+days+ " days.";
 		contextOut.setLifespan(2);
@@ -195,10 +194,10 @@ private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, Json
 	contextOut.setLifespan(2);
 	HashMap<String, JsonElement> outParameters = new HashMap<String, JsonElement>();
 	if (parameter.containsKey("startDate") ){
-		JsonElement startDate = new JsonPrimitive(parameter.get("startDate").toString());
+		JsonElement startDate = new JsonPrimitive(parameter.get("startDate").getAsString());
 		outParameters.put("startDate", startDate);
 	} if( parameter.containsKey("endDate") ) {
-		JsonElement endDate = new JsonPrimitive(parameter.get("endDate").toString());
+		JsonElement endDate = new JsonPrimitive(parameter.get("endDate").getAsString());
 		outParameters.put("endDate", endDate);
 	}
 	contextOut.setParameters(outParameters);
@@ -216,10 +215,10 @@ private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement
  */
 	String message = "";
 	if (parameter.get("comment").equals("")) {
-		message = "You want to apply for leave from " + parameter.get("startDate").toString() + " to " + parameter.get("endDate").toString() + " as "+ parameter.get("comment").toString();
+		message = "You want to apply for leave from " + parameter.get("startDate").getAsString() + " to " + parameter.get("endDate").getAsString() + " as "+ parameter.get("comment").getAsString();
 	}
 	else{
-		message = "You want to apply for leave from " + parameter.get("startDate").toString() + " to " + parameter.get("endDate").toString() + " for "+ parameter.get("event").toString();
+		message = "You want to apply for leave from " + parameter.get("startDate").getAsString() + " to " + parameter.get("endDate").getAsString() + " for "+ parameter.get("event").getAsString();
 
 	}
 	message += " \n please confirm ";
