@@ -311,8 +311,8 @@ private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, Json
 	log.info("rerouting to event : APPLY_LEAVE_CUSTOM");
 	followupEvent.setData(outParameter);
 	output.setFollowupEvent(followupEvent);
-	output.setSpeech(message);
-	output.setDisplayText(message);
+/*	output.setSpeech(message);
+	output.setDisplayText(message);*/
 	return output;
 }
 
