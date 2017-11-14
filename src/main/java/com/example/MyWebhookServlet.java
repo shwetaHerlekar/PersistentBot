@@ -1,6 +1,7 @@
 package com.example;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 
 import ai.api.model.AIEvent;
+
+
+
 import ai.api.model.AIOutputContext;
 import ai.api.model.Fulfillment;
 import ai.api.web.AIWebhookServlet;
@@ -302,19 +306,21 @@ private Fulfillment fallbackCustomApply(Fulfillment output, HashMap<String, Json
 	String msg = "";
 	if(isEventWithinRange(birthday))
 	{
-		msg = "Your birthday is coming on 21st November 2017. Want to go out??";
+		msg = "Your birthday is coming on "+birthday+". Want to go out??";
+		return msg;
 	}
 	else 
 	{
 		JSONObject holidays = (JSONObject) holidayData.get("holidays");
 		for(Iterator iterator = holidays.keySet().iterator(); iterator.hasNext();) {
 		    String key = (String) iterator.next();
-		    log.info(key);
+		    Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(key);  
+		    if(isEventWithinRange(date1))
+		    {
+		    	msg = holidays.get(key).toString()+" is coming. Do you want to take apply leave for"+holidays.get(key).toString();
+		    	return msg;
+		    }
 		}
-	}
-		
-	if (parameter.get("startDate").equals("")) {
-		
 	}
 	return msg;
 }
@@ -325,10 +331,12 @@ int days = 0;
 
 return 0;
 }
-	public boolean isEventWithinRange(Date testDate) {
-	  Date today = new Date(2017, 11, 14);
-	  Date last = new Date(2018, 1, 31);
-	  return !(testDate.before(today) || testDate.after(last));
+	public static boolean isEventWithinRange(Date testDate) throws ParseException {  
+		String event_date="11/14/2017";
+		Date today = new SimpleDateFormat("dd/MM/yyyy").parse(event_date);  
+		event_date="31/01/2018";
+		Date last = new SimpleDateFormat("dd/MM/yyyy").parse(event_date);  
+		return testDate.before(today) && last.after(testDate);
 	}
 
 }
