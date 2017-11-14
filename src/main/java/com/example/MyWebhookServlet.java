@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-
+import com.google.gson.JsonElement.*;
 import ai.api.model.AIOutputContext;
 import ai.api.model.Fulfillment;
 import ai.api.web.AIWebhookServlet;
@@ -72,35 +72,41 @@ protected void doWebhook(AIWebhookRequest input, Fulfillment output) {
 	}
 	// output.setSpeech(input.getResult().toString());
 
-	
+//output.setSpeech("from webhook");	
 }
 
 private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement> parameter) {
 	// TODO Auto-generated method stub
+	log.info("inside checkBal");
 	HashMap<String, Integer> holidayData = new HashMap<>( Data.getHolidays());
+	log.info("holiday "+ holidayData.toString());
 	AIOutputContext contextOut = new AIOutputContext();
 	String message ="";
-	int balance = holidayData.get("leaveBalance");
+	int balance = holidayData.get("leave_balance");
+	log.info("bal :"+balance);
 	int days = 0;
 	HashMap<String, JsonElement> outParameters = new HashMap<String, JsonElement>();
 	
-	if (parameter.containsKey("noOfDays")) {
-		days = Integer.parseInt(parameter.get("noOfDays").toString());
+	if (parameter.containsKey("noOfDays") && parameter.get("noOfDays").equals("") ){
+		log.info("contains no of days");
+		//days = Integer.parseInt(parameter.get("noOfDays"));
 		JsonElement contextOutParameter;
 		contextOutParameter = new JsonPrimitive(days);
 		outParameters.put("noOfDays", contextOutParameter);
 	}
 	if (parameter.containsKey("startDate") && parameter.containsKey("endDate")) {
-		if (parameter.get("startDate") != null) {
+		if (parameter.get("startDate").equals("")) {
+			log.info("start date");
 			JsonElement startDate = new JsonPrimitive(parameter.get("startDate").toString());
 			outParameters.put("startDate", startDate);
 			
 		}
-		if (parameter.get("endDate").toString() != null) {
+		if (parameter.get("endDate").equals("")) {
+			log.info("enddate");
 			JsonElement endDate = new JsonPrimitive(parameter.get("endDate").toString());
 			outParameters.put("endDate", endDate);
 		}
-		if (parameter.get("endDate").toString() != null && parameter.get("startDate") != null) {
+		if (parameter.get("endDate").equals("") && parameter.get("startDate").equals("")) {
 			days =  getDays(parameter.get("startdate").toString(), parameter.get("endDate").toString());
 			JsonElement noOfDay = new JsonPrimitive(days);// fetched no of days
 			outParameters.put("noOfDays", noOfDay);
@@ -108,9 +114,9 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 		}
 		
 	}
-	if (parameter.containsKey("event")) {
+	if (parameter.containsKey("event") && parameter.get("event").equals("")) {
 		JsonElement contextOutParameter;
-		contextOutParameter = new JsonPrimitive(parameter.get("event").toString());
+		contextOutParameter = new JsonPrimitive(parameter.get("event").equals(""));
 		outParameters.put("event", contextOutParameter);
 	}
 	if (balance <= 0) {
@@ -145,7 +151,7 @@ private Fulfillment checkBalance(Fulfillment output, HashMap<String, JsonElement
 private Fulfillment exitFlow(Fulfillment output) {
 	
 	AIOutputContext contextOut = new AIOutputContext();
-	output.setContextOut(contextOut); // context reset to null
+	output.setContextOut(contextOut); // context reset to ""
 	output.setDisplayText("Okay! no issues.");
 	return output;
 }
@@ -159,9 +165,9 @@ private Fulfillment confirmLeave(Fulfillment output, HashMap<String, JsonElement
 	HashMap<String, JsonElement> outParameters = new HashMap<String, JsonElement>();
 	String message = "";
 	AIOutputContext contextOut = new AIOutputContext();
-	output.setContextOut(contextOut); // context reset to null
+	output.setContextOut(contextOut); // context reset to ""
 	HashMap<String, Integer> holidayData = new HashMap<>( Data.getHolidays());
-	int leaveBalance = (int) holidayData.get("leaveBalance");
+	int leaveBalance = (int) holidayData.get("leave_balance");
 	int days = getDays(parameter.get("startdate").toString(), parameter.get("endDate").toString());
 	if (leaveBalance < days) {
 		message = "Your leave balance is less than :" + days +". You will need Delivery partner approval for applying. Still wanna apply? Or dear you can apply for "+days+ " days.";
@@ -209,7 +215,7 @@ private Fulfillment submitFeilds(Fulfillment output, HashMap<String, JsonElement
  * 
  */
 	String message = "";
-	if (parameter.get("comment") != null) {
+	if (parameter.get("comment").equals("")) {
 		message = "You want to apply for leave from " + parameter.get("startDate").toString() + " to " + parameter.get("endDate").toString() + " as "+ parameter.get("comment").toString();
 	}
 	else{
@@ -264,7 +270,7 @@ private Fulfillment queryForLeave(Fulfillment output,HashMap<String, JsonElement
 		}
 	}
 		
-	if (parameter.get("startDate") != null) {
+	if (parameter.get("startDate").equals("")) {
 		
 	}
 	return null;
